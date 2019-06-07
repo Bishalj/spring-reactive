@@ -3,12 +3,10 @@ package com.springreactivelearning.controller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
-import org.springframework.test.web.reactive.server.ExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
@@ -24,11 +22,7 @@ public class FluxAndMonoControllerTest {
 
         @Autowired
         WebTestClient webTestClient;
-        //
-//	@Test
-//	public void contextLoads() {
-//	}
-//
+        
         @Test
         public void flux_approach1() {
             Flux<Integer> integerFlux = webTestClient.get().uri("/flux")
