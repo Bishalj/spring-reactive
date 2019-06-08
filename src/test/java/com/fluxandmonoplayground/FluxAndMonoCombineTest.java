@@ -3,6 +3,7 @@ package com.fluxandmonoplayground;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
+import reactor.test.scheduler.VirtualTimeScheduler;
 
 import java.time.Duration;
 
@@ -38,8 +39,23 @@ public class FluxAndMonoCombineTest {
         Flux<String> flux2 = Flux.just("D", "E", "F").delayElements(Duration.ofSeconds(1));
 
         Flux<String>  concatFlux = Flux.concat(flux1, flux2);
-
+        //takes 6 seconds
         StepVerifier.create(concatFlux.log())
+                .expectNext("A", "B", "C", "D", "E", "F")
+                .verifyComplete();
+    }
+
+    @Test
+    public void combineUsingConcat_withDelay_virtualTime(){
+        VirtualTimeScheduler.getOrSet();
+        Flux<String> flux1 = Flux.just("A", "B", "C").delayElements(Duration.ofSeconds(1));
+        Flux<String> flux2 = Flux.just("D", "E", "F").delayElements(Duration.ofSeconds(1));
+
+        Flux<String>  concatFlux = Flux.concat(flux1, flux2);
+        //takes not even 1 seconds
+        StepVerifier.withVirtualTime(() -> concatFlux.log())
+                .expectSubscription()
+                .thenAwait(Duration.ofSeconds(6))
                 .expectNext("A", "B", "C", "D", "E", "F")
                 .verifyComplete();
     }
