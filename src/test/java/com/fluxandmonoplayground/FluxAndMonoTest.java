@@ -2,6 +2,7 @@ package com.fluxandmonoplayground;
 
 import org.junit.Test;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 public class FluxAndMonoTest {
@@ -72,6 +73,23 @@ public class FluxAndMonoTest {
         StepVerifier.create(flux)
                 .expectNextCount(3)
                 .expectError(RuntimeException.class)
+                .verify();
+    }
+
+    @Test
+    public  void monoTest(){
+        Mono<String> monoString = Mono.just("Spring");
+
+        StepVerifier.create(monoString)
+                .expectNext("Spring")
+                .verifyComplete();
+    }
+
+    @Test
+    public  void monoTest_WithError(){
+        StepVerifier.create(Mono.error(new RuntimeException("Error occured")).log())
+              //  .expectError(RuntimeException.class)
+                .expectErrorMessage("Error occured")
                 .verify();
     }
 
