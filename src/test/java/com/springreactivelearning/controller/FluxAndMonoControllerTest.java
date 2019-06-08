@@ -22,7 +22,7 @@ public class FluxAndMonoControllerTest {
 
         @Autowired
         WebTestClient webTestClient;
-        
+
         @Test
         public void flux_approach1() {
             Flux<Integer> integerFlux = webTestClient.get().uri("/flux")
