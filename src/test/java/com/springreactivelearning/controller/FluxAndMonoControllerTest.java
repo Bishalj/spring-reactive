@@ -10,6 +10,7 @@ import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
+import reactor.test.StepVerifierOptions;
 
 import java.util.Arrays;
 import java.util.List;
@@ -79,5 +80,24 @@ public class FluxAndMonoControllerTest {
                 .expectBodyList(Integer.class)
                 .consumeWith((response) ->
                         assertEquals(expectedList, response.getResponseBody()));
+    }
+
+    @Test
+    public void fluxStream(){
+            Flux<Long> longStreamFlux = webTestClient.get().uri("/fluxstream")
+                    .accept(MediaType.APPLICATION_STREAM_JSON)
+                    .exchange()
+                    .expectStatus().isOk()
+//                    .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .returnResult(Long.class)
+                    .getResponseBody();
+
+
+        StepVerifier.create(longStreamFlux)
+                .expectNext(0L)
+                .expectNext(1L)
+                .expectNext(2L)
+                .thenCancel()
+                .verify();
     }
 }
