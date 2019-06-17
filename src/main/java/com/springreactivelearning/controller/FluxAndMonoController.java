@@ -1,5 +1,6 @@
 package com.springreactivelearning.controller;
 
+import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -23,7 +24,7 @@ public class FluxAndMonoController {
     @Autowired
     private static Environment env;
     @GetMapping("/flux")
-    public Flux<Integer> returnFlux(){
+    public Publisher<Integer> returnFlux(){
 
         System.out.println("DB" + db);
         System.out.println("DB" + env.getProperty("data.mongodb.database"));
