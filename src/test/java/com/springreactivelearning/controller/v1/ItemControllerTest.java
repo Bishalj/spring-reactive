@@ -14,6 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import java.util.Arrays;
 import java.util.List;
@@ -65,6 +67,83 @@ public class ItemControllerTest {
                         assertTrue(i.getId() != null);
                     });
                 });
+    }
+
+    @Test
+    public void getAllItemsApproach_3(){
+        Flux<Item> itemFlux =  webTestClient.get().uri(ITEM_END_POINT_V1)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .returnResult(Item.class)
+                .getResponseBody();
+
+        StepVerifier.create(itemFlux.log("Value from network: "))
+                .expectNextCount(3)
+                .verifyComplete();
+    }
+
+    @Test
+    public void getOneItemTest(){
+        webTestClient.get().uri(ITEM_END_POINT_V1+"/554")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody()
+                .jsonPath("$.price",33.3);
+    }
+
+    @Test
+    public void getOneItemTestInvalid(){
+        webTestClient.get().uri(ITEM_END_POINT_V1+"/55wef4")
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    public void createItemTest(){
+        Item item = new Item(null, "Iphone X", 99.99);
+        webTestClient.post().uri(ITEM_END_POINT_V1)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(item), Item.class)
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody()
+                .jsonPath("$.id").isNotEmpty()
+                .jsonPath("$.description").isEqualTo("Iphone X");
+    }
+
+    @Test
+    public void deleteItemTest(){
+        webTestClient.delete().uri(ITEM_END_POINT_V1+"/554")
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Void.class);
+    }
+
+    @Test
+    public void updateItemTest(){
+        Item item = new Item(null, "Iphone X", 99.99);
+        webTestClient.put().uri(ITEM_END_POINT_V1+"/554")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(item), Item.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.price").isEqualTo( 99.99)
+                .jsonPath("$.description").isEqualTo("Iphone X");
+    }
+
+    @Test
+    public void updateItemTest_ID_NOT_FOUND(){
+        Item item = new Item(null, "Iphone X", 99.99);
+        webTestClient.put().uri(ITEM_END_POINT_V1+"/55433")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(item), Item.class)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(Void.class);
     }
 
 }

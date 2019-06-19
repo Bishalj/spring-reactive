@@ -27,7 +27,7 @@ public class FluxAndMonoController {
     public Publisher<Integer> returnFlux(){
 
         System.out.println("DB" + db);
-        System.out.println("DB" + env.getProperty("data.mongodb.database"));
+//        System.out.println("DB" + env.getProperty("data.mongodb.database"));
         return Flux.just(1,2,3,4)
                 .delayElements(Duration.ofSeconds(1))
                 .log();
