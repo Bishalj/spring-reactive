@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.springreactivelearning.constants.ItemConstants.ITEM_END_POINT_V1;
+import static junit.framework.TestCase.assertTrue;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -50,14 +51,20 @@ public class ItemControllerTest {
                 .blockLast();
     }
 
+
     @Test
-    public void getAllItems(){
+    public void getAllItemsApproach_2(){
         webTestClient.get().uri(ITEM_END_POINT_V1)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                 .expectBodyList(Item.class)
-                .hasSize(3);
+                .consumeWith( response -> {
+                    List<Item> items = response.getResponseBody();
+                    items.forEach( i -> {
+                        assertTrue(i.getId() != null);
+                    });
+                });
     }
 
 }
