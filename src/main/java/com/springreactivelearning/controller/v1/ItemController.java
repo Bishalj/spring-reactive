@@ -17,7 +17,6 @@ public class ItemController {
 
     @GetMapping(ITEM_END_POINT_V1)
     public Flux<Item> getAllItem(){
-        return itemReactiveRepository.findAll()
-                ;
+        return itemReactiveRepository.findAll().log();
     }
 }
