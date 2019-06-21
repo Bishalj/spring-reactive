@@ -2,6 +2,7 @@ package com.fluxandmonoplayground;
 
 import org.junit.Test;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.io.Flushable;
@@ -12,7 +13,6 @@ public class FluxAndMonoInfiniteStreamTest {
     @Test
     public void infiniteSequence() throws InterruptedException {
         Flux<Long> infiniteStream = Flux.interval(Duration.ofMillis(100)).log();
-
         infiniteStream.subscribe((element) -> System.out.println("The value is: "+element));
         Thread.sleep(3000);
     }
