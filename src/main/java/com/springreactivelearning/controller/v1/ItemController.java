@@ -14,6 +14,8 @@ import static com.springreactivelearning.constants.ItemConstants.ITEM_END_POINT_
 @RestController
 public class ItemController {
 
+
+
     @Autowired
     ItemReactiveRepository itemReactiveRepository;
 
@@ -21,6 +23,12 @@ public class ItemController {
     public Flux<Item> getAllItem(){
         return itemReactiveRepository.findAll().log();
     }
+
+    @GetMapping("/exception")
+    public Flux<Item> exception(){
+        return itemReactiveRepository.findAll().concatWith(Mono.error(new RuntimeException()));
+    }
+
 
     @GetMapping(ITEM_END_POINT_V1+"/{id}")
     public Mono<ResponseEntity<Item>> getAllItem1(@PathVariable("id") String id){
