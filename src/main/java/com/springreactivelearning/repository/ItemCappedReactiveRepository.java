@@ -3,12 +3,12 @@ package com.springreactivelearning.repository;
 import com.springreactivelearning.document.Item;
 import com.springreactivelearning.document.ItemCapped;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.repository.Tailable;
 import reactor.core.publisher.Flux;
 
 
-public interface ItemReactiveRepository extends ReactiveMongoRepository<Item, String> {
+public interface ItemCappedReactiveRepository extends ReactiveMongoRepository<ItemCapped, String> {
 
-    public Flux<Item> findByDescription(String description);
-
+    @Tailable
+    Flux<ItemCapped> findItemsBy();
 }
